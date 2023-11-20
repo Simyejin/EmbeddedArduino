@@ -96,20 +96,8 @@ void loop() {
     p.y = map(p.y, TS_MINY, TS_MAXY, 0, tft.height());;
     
     if (p.y > 40) {
-       if (p.y < 140) { 
-         tft.fillRect(0, 40, 400, 100, GREEN); //선택한 버스에 네모 표시
-         tft.setTextSize(3);
-         tft.setCursor(20, 80);
-         tft.setTextColor(BLACK);
-         tft.print("Bus : Number 97");
-         Serial.println('g');
-
-       } else if (p.y > 140 && p.y < 240) {
-         tft.fillRect(0, 140, 400, 100, GREEN); //선택한 버스에 네모 표시
-         tft.setTextSize(3);
-         tft.setCursor(20, 80);
-         tft.setTextColor(BLACK);
-         tft.print("Bus : Number 97");
+       if (p.y < 140) {
+           bustouch();
        }
     }
 
@@ -131,4 +119,12 @@ TSPoint waitOneTouch() {
   } while((p.z < MINPRESSURE )|| (p.z > MAXPRESSURE));
 
   return p;
+}
+
+void bustouch() {
+  tft.fillScreen(WHITE);
+  tft.setTextSize(8);
+  tft.setCursor(20, 100);
+  tft.setTextColor(BLACK);
+  tft.print("Number 97");
 }
