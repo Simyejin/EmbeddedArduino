@@ -43,6 +43,7 @@
 SPFD5408TFTLCDLib tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, SENSIBILITY);
 
+int count = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -51,38 +52,18 @@ void setup() {
   uint16_t identifier = tft.readID();
   tft.begin(0x9341);
   tft.setRotation(1); //가로모드설정
-  tft.fillScreen(WHITE); //배경->흰색으로 설정
-  tft.fillRect(0, 0, 400, 40, BLACK);
-
-  
-  tft.setTextSize(3);
-  tft.setCursor(80, 15);
-  tft.setTextColor(GREEN);
-  tft.print("BUS STATE");
-  
-  tft.setTextSize(3);
-  tft.setCursor(20, 80);
-  tft.setTextColor(BLACK);
-  tft.print("Bus : Number 97");
-
-  tft.drawLine(0, 140, 400, 140, BLACK);
-
-  tft.setTextSize(3);
-  tft.setCursor(20, 180);
-  tft.setTextColor(BLACK);
-  tft.print("Bus : Number 111");
-
+  busmain(); //이거 다른 곳에도 써야돼서 함수로 만들었음
   waitOneTouch();
-  pinMode(13, OUTPUT);
+  pinMode(9, OUTPUT);
 }
 
 
 
 void loop() {
   // tft lcd
-  digitalWrite(13, HIGH);
+  digitalWrite(9, HIGH);
   TSPoint p = ts.getPoint();
-  digitalWrite(13, LOW);
+  digitalWrite(9, LOW);
   pinMode(YP, OUTPUT); // restore shared pins
   pinMode(XM, OUTPUT);
 
@@ -94,14 +75,19 @@ void loop() {
 
     p.x = map(p.x, TS_MINX, TS_MAXX, 0, tft.width());
     p.y = map(p.y, TS_MINY, TS_MAXY, 0, tft.height());;
-    
+
     if (p.y > 40) {
        if (p.y < 140) {
-           bustouch();
+        bustouch();
        }
     }
-
+    if (p.y < 200 && p.y < 150) {
+       if (p.x > 180 && p.x < 240) {
+          busmain();
+       }
+    }
   }
+  
 }
 
 TSPoint waitOneTouch() {
@@ -121,10 +107,41 @@ TSPoint waitOneTouch() {
   return p;
 }
 
+
 void bustouch() {
   tft.fillScreen(WHITE);
-  tft.setTextSize(8);
+  tft.setTextSize(3);
   tft.setCursor(20, 100);
   tft.setTextColor(BLACK);
   tft.print("Number 97");
+
+  // 뒤로가기
+  tft.fillRect(200, 180, 80, 40, BLACK);
+  tft.setTextSize(3);
+  tft.setCursor(210, 190);
+  tft.setTextColor(WHITE);
+  tft.print("Back");
+
+}
+
+void busmain() {
+  tft.fillScreen(WHITE); //배경->흰색으로 설정
+  tft.fillRect(0, 0, 400, 40, BLACK);
+
+  tft.setTextSize(3);
+  tft.setCursor(80, 15);
+  tft.setTextColor(GREEN);
+  tft.print("BUS STATE");
+  
+  tft.setTextSize(3);
+  tft.setCursor(20, 80);
+  tft.setTextColor(BLACK);
+  tft.print("Bus : Number 97");
+
+  tft.drawLine(0, 140, 400, 140, BLACK);
+
+  tft.setTextSize(3);
+  tft.setCursor(20, 180);
+  tft.setTextColor(BLACK);
+  tft.print("Bus : Number 111");
 }
